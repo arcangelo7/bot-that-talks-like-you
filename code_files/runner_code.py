@@ -1,16 +1,17 @@
-from preprocessing import PreprocessChats
-import csv
 import codecs
-from vocab import Vocabulary
-import model_classes
-from train import start_training
+import csv
 import os
 
+import model_classes
+from preprocessing import PreprocessChats
+from train import start_training
+from vocab import Vocabulary
+
 #Path to be changed as suggested
-CHAT_FOLDER = 'path_to_repository/whatsapp_chats/'
-MASTER_FOLDER = 'path_to_repository/processed_chats/'
-SAVE_MODEL = 'path_to_repository/'
-YOUR_NAME = 'Your name as it appears in whatsapp settings'
+CHAT_FOLDER = '/mnt/c/Users/arcangelo.massari2/Desktop/bot-that-talks-like-you/whatsapp_chats/'
+MASTER_FOLDER = '/mnt/c/Users/arcangelo.massari2/Desktop/bot-that-talks-like-you/processed_chats/'
+SAVE_MODEL = '/mnt/c/Users/arcangelo.massari2/Desktop/bot-that-talks-like-you/'
+YOUR_NAME = 'Arcangelo'
 LOAD_MODEL_PATH = SAVE_MODEL + 'whatsapp_bot/'
 
 # CHAT_FOLDER = '/home/mohak/Music/chatbot/whatsapp_chats/'

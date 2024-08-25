@@ -1,7 +1,8 @@
+import codecs
 import os
 import re
 import unicodedata
-import codecs
+
 
 class PreprocessChats:
     '''
@@ -36,7 +37,7 @@ class PreprocessChats:
             if i == '.txt' or '.txt' not in i:
               continue
             
-            contact_name = i[19:].strip('.txt')
+            contact_name = i[18:].strip('.txt')
             #rename the file with as contact_name
             os.rename(self.chat_folder+i, self.chat_folder+contact_name+'.txt')
 
@@ -61,56 +62,70 @@ class PreprocessChats:
             f.close()
 
             #remove date-time from each line
-            date_time_pattern = "([0-9][0-9]\/[0-1][0-9]\/[0-9][0-9][0-9][0-9]\,\s[0-6][0-9]\:[0-9][0-9]\s\-\s)"
+            date_time_pattern = "([0-3][0-9]\/[0-1][0-9]\/[0-9][0-9]\,\s[0-2][0-9]\:[0-5][0-9]\s\-\s)"
             chat = re.sub(date_time_pattern, '', chat)
 
             #remove end-to-end encryption message
-            end_to_end = 'Messages to this chat and calls are now secured with end-to-end encryption. Tap for more info.'
+            end_to_end = 'I messaggi e le chiamate sono crittografati end-to-end. Nessuno al di fuori di questa chat, nemmeno WhatsApp, può leggerne o ascoltarne il contenuto. Tocca per saperne di più.'
             chat = chat.replace(end_to_end, '')
             
             #remove .txt from filename (i)
             i = i.replace('.txt','')
 
             #remove media-omitted message
-            media_omitted = i+': <Media omitted>'
-            media_omitted_you = self.your_name+': <Media omitted>'
+            media_omitted = i+': <Media omessi>'
+            media_omitted_you = self.your_name+': <Media omessi>'
             chat = chat.replace(media_omitted, '')
             chat = chat.replace(media_omitted_you, '')
+            chat = chat.replace('<Media omessi>', '')
+
+            #remove modified messages
+            media_omitted = i+': <Questo messaggio è stato modificato>'
+            media_omitted_you = self.your_name+': <Questo messaggio è stato modificato>'
+            chat = chat.replace(media_omitted, '')
+            chat = chat.replace(media_omitted_you, '')
+            chat = chat.replace('<Questo messaggio è stato modificato>', '')
             
             #remove deleted message
-            deleted = i+': This message was deleted'
-            deleted_you = self.your_name+': You deleted this message'
+            deleted = i+': Questo messaggio è stato cancellato'
+            deleted_you = self.your_name+': Hai cancellato questo messaggio'
             chat = chat.replace(deleted, '')
             chat = chat.replace(deleted_you, '')
-            
+
+            #remove video notes
+            deleted = i+': <Video note omitted>'
+            deleted_you = self.your_name+': <Video note omitted>'
+            chat = chat.replace(deleted, '')
+            chat = chat.replace(deleted_you, '')
+
             #missed video/voice call
-            missed_video = i+': Missed video call'
-            missed_video_you = self.your_name+': Missed video call'
-            missed_voice = i+': Missed voice call'
-            missed_voice_you = self.your_name+': Missed voice call'
+            missed_video = i+': Videochiamata persa'
+            missed_video_you = self.your_name+': Videochiamata persa'
+            missed_voice = i+': Videochiamata persa'
+            missed_voice_you = self.your_name+': Videochiamata persa'
             chat = chat.replace(missed_voice, '')
             chat = chat.replace(missed_voice_you, '')
             chat = chat.replace(missed_video, '')
             chat = chat.replace(missed_video_you, '')
 
             #remove emogis
-            emoji_pattern = re.compile("["
-                           u"\U0001F600-\U0001F64F"
-                           u"\U0001F300-\U0001F5FF"
-                           u"\U0001F680-\U0001F6FF"
-                           u"\U0001F1E0-\U0001F1FF"
-                           u"\U00002702-\U000027B0"
-                           u"\U0001F680-\U0001F6C0"
-                           u"\U000024C2-\U0001F251"
-                           u"\U0001F681-\U0001F6C5"
-                           u"\U0001F30D-\U0001F567"
-                           u"\U0001F550-\U0001F559"
-                           "]+", flags=re.UNICODE)
+            # emoji_pattern = re.compile("["
+            #                u"\U0001F600-\U0001F64F"
+            #                u"\U0001F300-\U0001F5FF"
+            #                u"\U0001F680-\U0001F6FF"
+            #                u"\U0001F1E0-\U0001F1FF"
+            #                u"\U00002702-\U000027B0"
+            #                u"\U0001F680-\U0001F6C0"
+            #                u"\U000024C2-\U0001F251"
+            #                u"\U0001F681-\U0001F6C5"
+            #                u"\U0001F30D-\U0001F567"
+            #                u"\U0001F550-\U0001F559"
+            #                "]+", flags=re.UNICODE)
 
-            chat = emoji_pattern.sub(r'', chat) #no emoji
+            # chat = emoji_pattern.sub(r'', chat) #no emoji
 
             #save the chats in processed_chats dir
-            new_file = open(self.master_folder+i+'txt', "w+")
+            new_file = open(self.master_folder+i+'.txt', "w+")
             new_file.write(chat)
             new_file.close()
 
@@ -133,9 +148,9 @@ class PreprocessChats:
         chat_pairs = []
 
         print('Processing chats.')
-
+        
         for i in chat_files:
-          #ignore autogenerated files that are not chats 
+            #ignore autogenerated files that are not chats 
             if i == '.txt' or '.txt' not in i:
                 continue
 

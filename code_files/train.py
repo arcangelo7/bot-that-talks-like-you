@@ -1,11 +1,8 @@
-from model_classes import Encoder, Attention, Attention_Decoder
-from model_classes import trainIters
-
 import torch
 import torch.nn as nn
-from torch import optim
 import torch.nn.functional as F
-
+from model_classes import Attention, Attention_Decoder, Encoder, trainIters
+from torch import optim
 
 CUDA = torch.cuda.is_available()
 if CUDA:

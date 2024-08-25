@@ -1,10 +1,11 @@
+import os
+import random
+
 import torch
 import torch.nn as nn
-from torch import optim
 import torch.nn.functional as F
+from torch import optim
 from vocab import Vocabulary
-import random
-import os 
 
 CUDA = torch.cuda.is_available()
 if CUDA:
@@ -143,7 +144,8 @@ def mask_NLL_loss(decoder_out, target, mask):
     #negative log likelyhood loss 
     cross_entropy = -torch.log(gather_tensor)
     #select the non zero elements
-    loss = cross_entropy.masked_select(mask)
+    mask_bool = mask.bool()
+    loss = cross_entropy.masked_select(mask_bool)
     loss = loss.mean()
     loss = loss.to(device)
     return loss, n_total.item()
